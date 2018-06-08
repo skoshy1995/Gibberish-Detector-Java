@@ -14,15 +14,17 @@ import java.util.Map;
  */
 public class GibberishDetector {
 	
-	private final Map<Character, Integer> alphabetPositionMap = new HashMap<Character, Integer>();
+        private final Map<Character, Integer> alphabetPositionMap = new HashMap<Character, Integer>();
 	private static final int MIN_COUNT_VAL = 10;
 
+        private final Character nonChar = '\u0466';
 	private final String alphabet;
 	private double[][] logProbabilityMatrix = null;
-	private double threshold = 0d;
+	public double threshold = 0d;
+	public double weight = 0d;
 	
 	public GibberishDetector(List<String> trainingLinesList, List<String> goodLinesList, List<String> badLinesList, String alphabet) {
-		this.alphabet = alphabet;
+		this.alphabet = alphabet + nonChar;
 		train(trainingLinesList, goodLinesList, badLinesList);		
 	}
 			
@@ -42,6 +44,9 @@ public class GibberishDetector {
 			throw new AssertionError("cannot create a threshold");
 		}
 		threshold = getThreshold(minGood, maxBad);
+                // Create weighting to allow comparing different result sets
+                weight = 0.50/threshold;
+                System.out.printf("Threshold: %f, weight: %f\n", threshold, weight);
 	}
 	
 	// can be overridden for another threshold heuristic implementation
@@ -56,17 +61,18 @@ public class GibberishDetector {
 		}
 	}
 	
-	private String normalize(String line) {
+        // Normalize to character array. Chars outside array set to nonChar to get Prob
+        private String normalize(String line) {
 		StringBuilder normalizedLine = new StringBuilder();
 		for (char c: line.toLowerCase().toCharArray()) {
-			normalizedLine.append(alphabet.contains(Character.toString(c)) ? c : "");
+			normalizedLine.append(alphabet.contains(Character.toString(c)) ? c : nonChar);
 		}
 		return normalizedLine.toString();
 	}
 	
 	private List<String> getNGram(int n, String line) {
 		String filteredLine = normalize(line);
-		List<String> nGram = new ArrayList<String>();
+		List<String> nGram = new ArrayList<>();
 		for (int start = 0; start < filteredLine.length() - n + 1; start++) {
 			nGram.add(filteredLine.substring(start, start + n));			
 		}
@@ -117,9 +123,9 @@ public class GibberishDetector {
 		
 	private int[][] createArray(int length){
 		int[][] counts = new int[length][length];
-	    for (int i = 0; i < counts.length; i++){
-	        Arrays.fill(counts[i], MIN_COUNT_VAL);
-	    }
+            for (int[] count : counts) {
+                Arrays.fill(count, MIN_COUNT_VAL);
+            }
 		return counts;
 	}
 	
@@ -138,5 +144,14 @@ public class GibberishDetector {
 	 */
 	public boolean isGibberish(String line) {
 		return !(getAvgTransitionProbability(line, logProbabilityMatrix) > threshold);
+	}
+        
+        /*
+         * Return the transitionProbabilty for tracking and debugging
+         * @param line is a sentence to check
+         * @return double for probability
+        */
+        public double getProbability(String line) {
+		return getAvgTransitionProbability(line, logProbabilityMatrix);
 	}
 }

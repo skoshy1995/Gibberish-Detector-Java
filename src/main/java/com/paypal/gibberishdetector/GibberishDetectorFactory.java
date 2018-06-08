@@ -97,6 +97,26 @@ public class GibberishDetectorFactory {
 			throw new RuntimeException("Exception in GibberishDetectorFactory: " + e.getMessage());
 		}
 	}
+
+        /**
+	 * creates a gibberish detector trained by the given files names and alphabet file. Assumes UTF-8 encoding.
+	 * @param trainingFileName name of a local file that contains lines for training
+	 * @param goodFileName name of a local file that contains good valid lines
+	 * @param badFileName name of a local file that contains bad gibberish lines
+	 * @param alphabetFileName String that contains all the alphabet of the language plus the white space character. for example: "abcdefghijklmnopqrstuvwxyz "
+	 * @return gibberish detector
+	 */
+	public GibberishDetector createGibberishDetectorFromLocalFile2(String trainingFileName, String goodFileName, String badFileName, String alphabetFileName) {
+		try {		
+			return createGibberishDetector(getLinesFromLocalFile(trainingFileName), getLinesFromLocalFile(goodFileName), getLinesFromLocalFile(badFileName), getLineFromLocalFile(alphabetFileName));
+		}
+		catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		catch (RuntimeException e) {
+			throw new RuntimeException("Exception in GibberishDetectorFactory: " + e.getMessage());
+		}
+	}
 	
 	private static List<String> getLinesFromFile(File file) {
 		List<String> lines = new ArrayList<String>();
@@ -124,5 +144,18 @@ public class GibberishDetectorFactory {
 			throw new RuntimeException("Can not initiate file: " + fileName , e);
 		} 
 		return lines;
+	}
+        
+        	private static String getLineFromLocalFile(String fileName) {
+		String line = new String();
+
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName), Charset.forName("UTF-8")))){
+			while(reader.ready()) { 
+				line = reader.readLine().toString();
+			}	
+		} catch (IOException | NullPointerException e) {
+			throw new RuntimeException("Can not initiate file: " + fileName , e);
+		} 
+		return line;
 	}
 }
