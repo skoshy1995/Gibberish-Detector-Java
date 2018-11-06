@@ -1,11 +1,11 @@
 /*
  * GibberishNameDetector
- * 
+ *
  * Pass in a list of names and a Markov probability table
  * Returns names with positive score, negative score, final score, and 1/0 for pass/fail
  *
  * Depends on pre-built detector Markov chains
- * 
+ *
  * Markov probability table includes:
  * - Threshold
  * - array of good probabilities
@@ -35,112 +35,114 @@ import com.paypal.gibberishdetector.GibberishDetectorFactory;
  * @author mimckenna
  */
 public class GibberishNameDetector {
-    public static void main(String[] args) {
-        
-        String[] goodEnglishSentences = {
-                "my name is Shir", 
-                "hello world", 
-                "and you can tell everybody that this is your song", 
-                "ALEXANDRAMARIALARA",
-                "ALLSTAR",
-                "ALMIGHTLYGOD",
-                "ALOTTAFAGINA",
-                "ALPHONSEBROWN",
-                "ALUMINUMMAN",
-                "JOHNJOHN",
-                "KARLCHEN",
-                "KARLDALL",
-                "KARLTHEODORFRANZJOSEFMARIAVONUNDZUGUTTENBERG",
-                "ZECKE",
-                "ZELDA",
-                "ZINEDINEZIDANE"
-        };
-	String[] badEnglishSentences = {
-                "2 chhsdfitoixcv", 
-                "Wm the 3rd",
-                "fasdf asg ggd fhgkv", 
-                "qmdu poebc vuutkl jsupwre",
-                "asdf asdf", 
-                "sam123",
-                "mike@paypal.com",
-                "http://unicode.org",
-                "AAAAEEEESSSS",
-                "AABCDEFGH",
-                "JP",
-                "GIJOE",
-                "Mike.McKenna657",
-                "eeeeeeeeeeeee",
-                "Jane 8 Tau",
-                "GIHOHOSD",
-                "KAPTNBLAUBR",
-                "KARLHEINZBHM",
-                "GIJANE",
-                "ZLATKO",
-                "ÈIHÁÈKOVÁ DØÍMALOVÁ",
-                "ŠŹOVÍÈKOVÁ ŠIMÁKOVÁ",
-                "hjkhjkhjk",
-                "qwerty",
-                "asdfghjk",
-                "zxcvbnm",
-                "$$$$$$$",
-                "not in alphabet",
-                "☃☃☃☃",
-                "Tex", "Texin", "Ute", "May", "Stu", "Rex", "Sex"
+	public static void main(String[] args) {
 
-        };
-	// String alphabet = "abcdefghijklmnopqrstuvwxyz ";
-	// Get alphabet from CLDR Exemplar characters for language group
-        // String alphabet = "abcdefghijklmnopqrstuvwxyz 0123456789!@#$%^&*().,<>?/:;'-";
-        String alphabet = " 0123456789!\"#&'()*,-./:;?@[]abcdefghijklmnopqrstuvwxyz§àáâãäåæçèéêëìíîïñòóôöøùúûüÿāăēĕīĭōŏœūŭ‐–—‘’“”†‡…′″";
+		String[] goodEnglishSentences = {
+				"anderson",
+				"boyd",
+				"collins",
+				"dudley-newson brenda",
+				"edwards sandra",
+				"ferguson vickie",
+				"footman ursula",
+				"gandy stacy",
+				"hedgeman jerrika",
+				"jenkins lanses",
+				"lynom jackson beverly",
+				"mcelhaney deaunna",
+				"rainey renee",
+				"billups wylie",
+				"Moeneclaey",
+				"Nazem",
+				"Pagenkopf",
+				"Zakarya"
+		};
+		String[] badEnglishSentences = {
+				"2 chhsdfitoixcv",
+				"Wm the 3rd",
+				"fasdf asg ggd fhgkv",
+				"qmdu poebc vuutkl jsupwre",
+				"asdf asdf",
+				"sam123",
+				"mike@paypal.com",
+				"http://unicode.org",
+				"AAAAEEEESSSS",
+				"AABCDEFGH",
+				"JP",
+				"GIJOE",
+				"Mike.McKenna657",
+				"eeeeeeeeeeeee",
+				"Jane 8 Tau",
+				"GIHOHOSD",
+				"KAPTNBLAUBR",
+				"KARLHEINZBHM",
+				"GIJANE",
+				"ZLATKO",
+				"ÈIHÁÈKOVÁ DØÍMALOVÁ",
+				"ŠŹOVÍÈKOVÁ ŠIMÁKOVÁ",
+				"hjkhjkhjk",
+				"qwerty",
+				"asdfghjk",
+				"zxcvbnm",
+				"$$$$$$$",
+				"nosdt in salwelawe",
+				"☃☃☃☃",
+				"Texin", "Ute", "May", "Stu", "Rex", "Sex", "aeioaueioaueaoiaeuaau"
 
-	GibberishDetectorFactory factory = new GibberishDetectorFactory(GibberishDetectorExtended.class);
-	
-        /*
-         * Build and train probability matrix
-         * Use default values based on Census data if not passed in args
-         */
-        GibberishDetector gibberishDetector = factory.createGibberishDetectorFromLocalFile2("en-training-data.txt",
-										"en-good-names.txt", "badEnglish.txt", "en-alphabet.txt");
-        //GibberishDetector gibberishDetector = factory.createGibberishDetectorFromLocalFile2("cs-train.txt",
-	//									"cs-good.txt", "badEnglish.txt", "cs-alphabet.txt");
-        GibberishDetector negDetector = factory.createGibberishDetectorFromLocalFile2("keybd-en.txt",
-										"keybd-en-good.txt", "keybd-en-bad.txt", "keybd-en-alphabet.txt");
+		};
+		// String alphabet = "abcdefghijklmnopqrstuvwxyz ";
+		// Get alphabet from CLDR Exemplar characters for language group
+		// String alphabet = "abcdefghijklmnopqrstuvwxyz 0123456789!@#$%^&*().,<>?/:;'-";
+		String alphabet = " 0123456789!\"#&'()*,-./:;?@[]abcdefghijklmnopqrstuvwxyz§àáâãäåæçèéêëìíîïñòóôöøùúûüÿāăēĕīĭōŏœūŭ‐–—‘’“”†‡…′″";
 
-        System.out.println("------------");
-        System.out.println("Test lines");
-        System.out.printf("alphabet: %s%n", alphabet);
-	System.out.println("------------");
+		GibberishDetectorFactory factory = new GibberishDetectorFactory(GibberishDetectorExtended.class);
 
-        for (String line : goodEnglishSentences) {
-            double goodProb = (gibberishDetector.getProbability(line) - gibberishDetector.threshold) * gibberishDetector.weight;
-            double negProb = (negDetector.getProbability(line) - negDetector.threshold) * negDetector.weight;
-            double finalGibberish = goodProb - negProb/2;
-            
-            System.out.printf("Gibberish: %s %f : %s\n",
-                    finalGibberish < 0 ? "TRUE  :" : "false : ", 
-                        finalGibberish, line);
-            System.out.printf("      Pos: %s   :  %f\n", 
-                    gibberishDetector.isGibberish(line)? "yes" : "no ", goodProb);
-            System.out.printf("      Neg: %s   : %f\n\n", 
-                    negDetector.isGibberish(line)? "no " : "yes", negProb);
-        }		
+		/*
+		 * Build and train probability matrix
+		 * Use default values based on Census data if not passed in args
+		 */
+		GibberishDetector gibberishDetector = factory.createGibberishDetectorFromLocalFile2("en-training-data.txt",
+				"en-good-names.txt", "badEnglish.txt", "en-alphabet.txt");
+		//GibberishDetector gibberishDetector = factory.createGibberishDetectorFromLocalFile2("cs-train.txt",
+		//									"cs-good.txt", "badEnglish.txt", "cs-alphabet.txt");
+		// GibberishDetector negDetector = factory.createGibberishDetectorFromLocalFile2("keybd-en.txt",
+		// "keybd-en-good.txt", "keybd-en-bad.txt", "keybd-en-alphabet.txt");
 
-        System.out.println("------------");
-        System.out.println("Test bad lines"); // Display the string.
-	System.out.println("------------");
+		System.out.println("------------");
+		System.out.println("Test lines");
+		System.out.printf("alphabet: %s%n", alphabet);
+		System.out.println("------------");
 
-        for (String line : badEnglishSentences) {
-            double goodProb = (gibberishDetector.getProbability(line) - gibberishDetector.threshold) * gibberishDetector.weight;
-            double negProb = (negDetector.getProbability(line) - negDetector.threshold) * negDetector.weight;
-            double finalGibberish = goodProb - negProb/2;
-            
-            System.out.printf("Gibberish: %s %f : %s\n",
-                    finalGibberish < 0 ? "TRUE  :" : "false : ", 
-                        finalGibberish, line);
-            System.out.printf("      Pos: %s   :  %f\n", 
-                    gibberishDetector.isGibberish(line)? "yes" : "no ", goodProb);
-            System.out.printf("      Neg: %s   : %f\n\n", 
-                    negDetector.isGibberish(line)? "no " : "yes", negProb);
-        }
-    }
+		for (String line : goodEnglishSentences) {
+			double goodProb = (gibberishDetector.getProbability(line) - gibberishDetector.threshold) * gibberishDetector.weight;
+			// double negProb = (negDetector.getProbability(line) - negDetector.threshold) * negDetector.weight;
+			double finalGibberish = goodProb ;//- negProb/2;
+
+			System.out.printf("Gibberish: %s %f : %s\n",
+					finalGibberish < 0 ? "TRUE  :" : "false : ",
+							finalGibberish, line);
+			System.out.printf("     Pos: %s   :  %f\n",
+					gibberishDetector.isGibberish(line)? "yes" : "no ", goodProb);
+			// System.out.printf("      Neg: %s   : %f\n\n",
+			//         negDetector.isGibberish(line)? "no " : "yes", negProb);
+		}
+
+		System.out.println("------------");
+		System.out.println("Test bad lines"); // Display the string.
+		System.out.println("------------");
+
+		for (String line : badEnglishSentences) {
+			double goodProb = (gibberishDetector.getProbability(line) - gibberishDetector.threshold) * gibberishDetector.weight;
+			// double negProb = (negDetector.getProbability(line) - negDetector.threshold) * negDetector.weight;
+			double finalGibberish = goodProb; // - negProb/2;
+
+			System.out.printf("Gibberish: %s %f : %s\n",
+					finalGibberish < 0 ? "TRUE  :" : "false : ",
+							finalGibberish, line);
+			System.out.printf("     Pos: %s   :  %f\n",
+					gibberishDetector.isGibberish(line)? "yes" : "no ", goodProb);
+			// System.out.printf("      Neg: %s   : %f\n\n",
+			//         negDetector.isGibberish(line)? "no " : "yes", negProb);
+		}
+	}
 }
