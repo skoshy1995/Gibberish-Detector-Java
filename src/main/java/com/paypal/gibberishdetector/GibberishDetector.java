@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.ibm.icu.text.Normalizer2;
 
 /**
  * gibberish detector used to train and classify sentences as gibberish or not.
@@ -30,10 +31,8 @@ public class GibberishDetector {
 
 	private void train(List<String> trainingLinesList, List<String> goodLinesList, List<String> badLinesList) {
 		initializePositionMap();
-
 		int[][][] alphabetCouplesMatrix = getAlphaBetCouplesMatrix(trainingLinesList);
 		logProbabilityMatrix = getLogProbabilityMatrix(alphabetCouplesMatrix);
-
 		List<Double> goodProbability = getAvgTransitionProbability(goodLinesList, logProbabilityMatrix);
 		List<Double> badProbability = getAvgTransitionProbability(badLinesList, logProbabilityMatrix);
 
@@ -76,9 +75,18 @@ public class GibberishDetector {
 		}
 		return normalizedLine.toString();
 	}
-
+	private String normalizeKD(String line) {
+		Normalizer2 normalizer = Normalizer2.getNFKDInstance();
+		String normalizedString = normalize(line);
+		return normalizer.normalize(normalizedString);
+	}
 	private List<String> getNGram(int n, String line) {
-		String filteredLine = normalize(line);
+		//System.out.println("Before: "+line);
+		String filteredLine = normalizeKD(line);
+		//System.out.println("After: "+filteredLine);
+//		
+		// String filteredLine2 = normalize(line);
+		// System.out.println("After2: "+filteredLine2);
 		List<String> nGram = new ArrayList<>();
 		for (int start = 0; start < filteredLine.length() - n + 1; start++) {
 			nGram.add(filteredLine.substring(start, start + n));
@@ -91,7 +99,9 @@ public class GibberishDetector {
 		for (String line : trainingLinesList) {
 			List<String> nGram = getNGram(3, line);
 			for (String touple : nGram) {
-				counts[alphabetPositionMap.get(touple.charAt(0))][alphabetPositionMap.get(touple.charAt(1))][alphabetPositionMap.get(touple.charAt(2))]++;
+				// System.out.println(alphabetPositionMap.toString());
+				//counts[alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(0) | 0x10000).substring(1))][alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(1) | 0x10000).substring(1))][alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(2) | 0x10000).substring(1))]++;
+				counts[alphabetPositionMap.get(touple.charAt(0))][alphabetPositionMap.get( touple.charAt(1) )][alphabetPositionMap.get( touple.charAt(2))]++;
 			}
 		}
 		return counts;
@@ -125,6 +135,10 @@ public class GibberishDetector {
 		int transitionCount = 0;
 		List<String> nGram = getNGram(3, line);
 		for (String touple : nGram) {
+//			if (line.equals("ÈIHÁÈKOVÁ DØÍMALOVÁ")) {
+//				
+//			}
+			//logProb += logProbabilityMatrix[alphabetPositionMap.get(alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(0) | 0x10000).substring(1)))][alphabetPositionMap.get(alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(1) | 0x10000).substring(1)))][alphabetPositionMap.get(alphabetPositionMap.get( "\\u" +Integer.toHexString(touple.charAt(2) | 0x10000).substring(1)))];
 			logProb += logProbabilityMatrix[alphabetPositionMap.get(touple.charAt(0))][alphabetPositionMap.get(touple.charAt(1))][alphabetPositionMap.get(touple.charAt(2))];
 			transitionCount++;
 		}

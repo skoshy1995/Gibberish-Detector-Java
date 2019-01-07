@@ -26,6 +26,8 @@
  */
 package GibberishNameDetector;
 
+import com.ibm.icu.text.Normalizer2;
+import com.ibm.icu.text.UnicodeSet;
 import com.paypal.gibberishdetector.GibberishDetector;
 import com.paypal.gibberishdetector.GibberishDetectorExtended;
 import com.paypal.gibberishdetector.GibberishDetectorFactory;
@@ -92,9 +94,10 @@ public class GibberishNameDetector {
 		};
 		// String alphabet = "abcdefghijklmnopqrstuvwxyz ";
 		// Get alphabet from CLDR Exemplar characters for language group
-		// String alphabet = "abcdefghijklmnopqrstuvwxyz 0123456789!@#$%^&*().,<>?/:;'-";
-		String alphabet = " 0123456789!\"#&'()*,-./:;?@[]abcdefghijklmnopqrstuvwxyz§àáâãäåæçèéêëìíîïñòóôöøùúûüÿāăēĕīĭōŏœūŭ‐–—‘’“”†‡…′″";
-
+		//String alphabet = " 0123456789!\"#&'()*,-./:;?@[]abcdefghijklmnopqrstuvwxyz\u00e8\u00A7\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF\u00F1\u00F2\u00F3\u00F4\u00F6\u00F8\u00F9\u00FA\u00FB\u00FC\u00FF\u0101\u0103\u0113\u0115\u012B\u012D\u014D\u014F\u0153\u016B\u016D\u2010\u2013\u2014\u2018\u2019\u201C\u201D\u2020\u2021\u2026\u2032\u2033\u0300";
+		String alphabet = " 0123456789!\"#&'()*,-./:;?@[]abcdefghijklmnopqrstuvwxyz\u00e8\u00A7\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u00E6\u00E7\u00E8\u00E8\u00E9\u00EA\u00EB\u00EC\u00ED\u00EE\u00EF\u00F1\u00F2\u00F3\u00F4\u00F6\u00F8\u00F9\u00FA\u00FB\u00FC\u00FF\u0101\u0103\u0113\u0115\u012B\u012D\u014D\u014F\u0153\u016B\u016D\u2010\u2013\u2014\u2018\u2019\u201C\u201D\u2020\u2021\u2026\u2032\u2033\u0300";
+		//UnicodeSet alphabet = new UnicodeSet(pattern);
+//		String alphabet = normalizeKD(alphabet1);
 		GibberishDetectorFactory factory = new GibberishDetectorFactory(GibberishDetectorExtended.class);
 
 		/*

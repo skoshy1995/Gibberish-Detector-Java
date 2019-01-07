@@ -34,6 +34,7 @@ public class GibberishDetectorFactory {
 			return type.getConstructor(new Class[] {List.class, List.class, List.class, String.class}).newInstance(trainingList, goodList, badList, alphabet);		
 		} 
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Exception in GibberishDetectorFactory: " + (e.getCause() != null ? e.getCause().getMessage() : ""));
 		}
 	}
@@ -111,6 +112,7 @@ public class GibberishDetectorFactory {
 			return createGibberishDetector(getLinesFromLocalFile(trainingFileName), getLinesFromLocalFile(goodFileName), getLinesFromLocalFile(badFileName), getLineFromLocalFile(alphabetFileName));
 		}
 		catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 		catch (RuntimeException e) {
